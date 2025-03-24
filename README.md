@@ -2,7 +2,7 @@
 
 <div align="center">
   <img src="src/assets/logo4.png" alt="CodeSage Logo" width="200"/>
-  <p><em>Your AI-powered coding companion</em></p>
+  <p><em>Your AI-powered Development Pod</em></p>
 </div>
 
 ## 🌟 Overview
@@ -95,5 +95,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 <div align="center">
-  Made with ❤️ by Your Team
+  Made with ❤️ by CodeSage
 </div> 
