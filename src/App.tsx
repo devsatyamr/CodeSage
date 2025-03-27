@@ -3,103 +3,204 @@ import { Send, Loader2, Sparkles } from 'lucide-react';
 import { ChatMessage } from './components/ChatMessage';
 import { Message } from './types';
 import { sendMessage } from './api';
-import logo from './assets/logo5.png';
+import logo from './assets/logo3.png';
 
 function App() {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      content: "Hello! I'm your AI assistant. How can I help you today?",
-      role: 'assistant',
-      timestamp: new Date(),
-    },
-  ]);
-  const [input, setInput] = useState('');
+  const [conversations, setConversations] = useState<
+    { id: string; name: string; messages: Message[] }[]
+  >([]);
+  const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
+  const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [conversations]);
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    if (conversations.length === 0 && activeConversationId === null) {
+      startNewChat();
+    }
+  }, [conversations, activeConversationId]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim() || isLoading) return;
+ 
+  const generateChatName = (messages: Message[], existingNames: string[]): string => {
+    if (!messages.length) return "New Chat";
 
-    const userMessage: Message = {
+    // Find the first user message
+    const firstUserMessage = messages.find(msg => msg.role === "user");
+    if (!firstUserMessage) return "New Chat";
+
+    // Extract meaningful part of the message (first 3 words)
+    let baseName = firstUserMessage.content.trim().split(/\s+/).slice(0, 3).join(" ");
+    if (!baseName) return "New Chat"; // Fallback if empty
+
+    // Ensure unique name
+    let uniqueName = baseName;
+    let count = 1;
+    while (existingNames.includes(uniqueName)) {
+        uniqueName = `${baseName} (${count})`;
+        count++;
+    }
+
+    return uniqueName;
+};
+
+
+
+
+const startNewChat = () => {
+  setConversations(prev => {
+      const existingNames = prev.map(chat => chat.name);
+
+      const newChat = {
+          id: Date.now().toString(),
+          name: "New Chat",
+          messages: [
+              {
+                  id: "1",
+                  content: "Hello! I'm your AI assistant. How can I help you today?",
+                  role: "assistant", // ✅ Now correctly typed
+                  timestamp: new Date(),
+              } as Message, // ✅ Explicitly cast to Message
+          ],
+      };
+
+      newChat.name = generateChatName(newChat.messages, existingNames);
+
+      return [newChat, ...prev];
+  });
+
+  setActiveConversationId(Date.now().toString());
+};
+
+
+
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  if ((!input.trim() && !selectedFile) || isLoading || !activeConversationId) return;
+
+  const userMessage: Message = {
       id: Date.now().toString(),
       content: input.trim(),
-      role: 'user',
+      role: "user",
       timestamp: new Date(),
-    };
+  };
 
-    setMessages((prev) => [...prev, userMessage]);
-    setInput('');
-    setIsLoading(true);
+  setConversations((prev) => 
+      prev.map((chat) => {
+          if (chat.id === activeConversationId) {
+              const isFirstUserMessage = chat.messages.every(msg => msg.role !== "user");
+              const updatedName = isFirstUserMessage ? generateChatName([userMessage], prev.map(c => c.name)) : chat.name;
 
-    try {
-      const response = await sendMessage(input.trim());
+              return {
+                  ...chat,
+                  messages: [...chat.messages, userMessage],
+                  name: updatedName, // Update the name dynamically
+              };
+          }
+          return chat;
+      })
+  );
+
+  setInput("");
+  setIsLoading(true);
+
+  try {
+      const response = await sendMessage(input.trim(), selectedFile || undefined);
+
       const botMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        content: response,
-        role: 'assistant',
-        timestamp: new Date(),
+          id: (Date.now() + 1).toString(),
+          content: response.response || "No response",
+          role: "assistant",
+          timestamp: new Date(),
+          fileUrl: response.fileUrl || undefined,
       };
-      setMessages((prev) => [...prev, botMessage]);
-    } catch (error) {
-      console.error('Failed to get response:', error);
-    } finally {
+
+      setConversations((prev) => 
+          prev.map((chat) =>
+              chat.id === activeConversationId
+                  ? { ...chat, messages: [...chat.messages, botMessage] }
+                  : chat
+          )
+      );
+  } catch (error) {
+      console.error("Failed to send message:", error);
+  } finally {
       setIsLoading(false);
+      setSelectedFile(null);
+  }
+};
+
+
+  
+ 
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setSelectedFile(e.target.files[0]);
+      console.log("Selected file:", e.target.files[0]);
     }
   };
 
+  const filteredMessages =
+    conversations.find((chat) => chat.id === activeConversationId)?.messages || [];
+
   return (
-    <div className="min-h-screen bg-transparent text-white">
-      <div className="max-w-4xl mx-auto p-4 flex flex-col h-screen">
-        <header className="text-center py-8 relative">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl"></div>
-          <h1 className="text-4xl font-bold  mb-3 relative flex items-center justify-center">
-            <Sparkles className="relative -left-8 top-1/2 -translate-y-1/2 w-5 h-5 text-purple-400/70" />
-            <img src={logo} alt="Logo" className="w-1/3 h-1/3 object-contain mr-2 bg-transparent mix-blend-multiply" />
-            <Sparkles className="relative -right-8 top-1/2 -translate-y-1/2 w-5 h-5 text-purple-400/70" />
-          </h1>
-          {/* <p className="text-gray-400 font-light tracking-wide">Your personal product expert</p> */}
-        </header>
+    <div className="flex">
+      <Sidebar
+        conversations={conversations}
+        activeConversationId={activeConversationId}
+        setActiveConversationId={setActiveConversationId}
+        startNewChat={startNewChat}
+      />
 
-        <div className="flex-1 overflow-y-auto space-y-4 mb-6 px-2">
-          {messages.map((message) => (
-            <ChatMessage key={message.id} message={message} />
-          ))}
-          <div ref={messagesEndRef} />
+      <div className="flex-1 min-h-screen bg-transparent text-white">
+        <div className="max-w-4xl mx-auto p-4 flex flex-col h-screen">
+          <header className="text-center py-8 relative">
+            <img src={logo} alt="Logo" className="h-12 mx-auto" />
+          </header>
+
+          <div className="flex-1 overflow-y-auto space-y-4 mb-6 px-2">
+            {filteredMessages?.map((message) => (
+              <Suspense fallback={<p>Loading message...</p>} key={message.id}>
+                <ChatMessage message={message} />
+              </Suspense>
+            ))}
+            <div ref={messagesEndRef} />
+          </div>
+
+          <form onSubmit={handleSubmit} className="flex gap-3 relative w-full max-w-4xl mx-auto px-6 pb-4 items-center">
+            <input type="file" id="file-upload" className="hidden" onChange={handleFileUpload} />
+
+            <label
+              htmlFor="file-upload"
+              className="cursor-pointer shrink-0 rounded-2xl px-4 py-4 bg-white/10 backdrop-blur-md border border-white/20 flex items-center gap-2 hover:bg-white/20 transition"
+            >
+              <Paperclip className="text-white" />
+            </label>
+
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Type your message..."
+              className="flex-1 rounded-2xl px-6 py-4 bg-white/10 backdrop-blur-md text-white border border-white/20 focus:border-white/50 outline-none placeholder-gray-300"
+              disabled={isLoading}
+            />
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="rounded-2xl px-6 py-4 bg-white/10 backdrop-blur-md border border-white/20 flex items-center gap-2 hover:bg-white/20 transition"
+            >
+              {isLoading ? <Loader2 className="animate-spin" /> : <Send />}
+              <span className="text-white">Send</span>
+            </button>
+          </form>
         </div>
-
-        <form onSubmit={handleSubmit} className="flex gap-3 relative">
-          <div className="absolute inset-0 bg-purple-500/5 blur-2xl -z-10 rounded-lg"></div>
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Type your message..."
-            className="flex-1 glass-effect rounded-2xl px-6 py-4 focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all"
-            disabled={isLoading}
-          />
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="glass-effect hover:bg-purple-500/20 rounded-2xl px-6 py-4 flex items-center gap-2 transition-all disabled:opacity-50 disabled:hover:bg-transparent"
-          >
-            {isLoading ? (
-              <Loader2 className="w-5 h-5 animate-spin" />
-            ) : (
-              <Send className="w-5 h-5" />
-            )}
-            <span className="hidden sm:inline">Send</span>
-          </button>
-        </form>
       </div>
     </div>
   );

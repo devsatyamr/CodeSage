@@ -1,33 +1,32 @@
-const API_ENDPOINT = '/api/chat'; // Replace with your actual API endpoint
+const API_ENDPOINT = "http://localhost:5000/api/chat";
 
-export async function sendMessage(message: string): Promise<string> {
-  // For development: Use mock response while backend is not available
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(`This is a mock response to your message: "${message}". Please implement the actual backend API endpoint to receive real responses.`);
-    }, 1000); // Simulate network delay
+
+export interface ChatResponse {
+  message: string;  // ✅ Ensure this matches backend response
+  fileUrl?: string; // ✅ Optional if backend supports file responses
+  error?: string;   // ✅ Capture errors properly
+}
+
+export const sendMessage = async (message: string, file?: File) => {  
+  if (!message.trim() && !file) {
+    throw new Error("Message or file is required!"); // ✅ Prevents sending empty request
+  }
+
+  const formData = new FormData();
+  formData.append("message", message);
+  if (file) {
+    formData.append("file", file);
+  }
+
+  const response = await fetch("http://localhost:5000/api/chat", {
+    method: "POST",
+    body: formData, // ✅ Use FormData instead of JSON
   });
 
-  // Uncomment this section when your backend is ready
-  /*
-  try {
-    const response = await fetch(API_ENDPOINT, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ message }),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to send message');
-    }
-
-    const data = await response.json();
-    return data.response;
-  } catch (error) {
-    console.error('Error sending message:', error);
-    throw error;
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(`HTTP ${response.status}: ${errorData.error}`);
   }
-  */
-}
+
+  return response.json();
+};
