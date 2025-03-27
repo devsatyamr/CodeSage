@@ -3,7 +3,7 @@ import { Send, Loader2, Paperclip } from 'lucide-react';
 import { ChatMessage } from './components/ChatMessage';
 import { Message } from './types';
 import { sendMessage } from './api';
-import logo from './assets/logo3.png';
+import logo from './assets/logo5.png';
 import { Sidebar } from "./components/Sidebar";
 
 function App() {
