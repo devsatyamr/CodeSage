@@ -1,5 +1,5 @@
 import { useState } from "react";
-import sidebarLogo from "/src/assets/A_futuristic,_minimalistic_logo_with_the_text_'A.U.png";
+import sidebarLogo from "/src/assets/logo6.png";
 
 
 interface SidebarProps {

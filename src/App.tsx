@@ -162,7 +162,7 @@ function App() {
               className="rounded-2xl px-6 py-4 bg-white/10 backdrop-blur-md border border-white/20 flex items-center gap-2 hover:bg-white/20 transition"
             >
               {isLoading ? <Loader2 className="animate-spin" /> : <Send />}
-              <span className="text-white">Send</span>
+              <span className="text-white"></span>
             </button>
           </form>
         </div>
