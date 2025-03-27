@@ -1,9 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Send, Loader2, Sparkles } from 'lucide-react';
+import React, { useState, useRef, useEffect, Suspense } from 'react';
+import { Send, Loader2, Paperclip } from 'lucide-react';
 import { ChatMessage } from './components/ChatMessage';
 import { Message } from './types';
 import { sendMessage } from './api';
 import logo from './assets/logo3.png';
+import { Sidebar } from "./components/Sidebar";
+
 
 function App() {
   const [conversations, setConversations] = useState<
