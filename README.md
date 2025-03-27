@@ -64,6 +64,17 @@ yarn dev
 
 ```plaintext
 codesage/
+server/
+│── node_modules/        (auto-created after running npm install)
+│── index.js            (Main backend file)
+│── package.json         (Dependencies and scripts)
+│── .env                 (For API keys or sensitive data)
+│── routes/
+│    ├── chatRoutes.js   (Handles chat requests)
+│── controllers/
+│    ├── chatController.js (Processes AI responses)
+│── config/
+│    ├── openaiConfig.js (OpenAI setup)
 ├── src/
 │   ├── assets/
 │   ├── components/
