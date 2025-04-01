@@ -213,3 +213,22 @@ body::after {
   font-weight: 900;
   font-style: italic;
 }
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.app {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.message-container {
+  flex: 1;
+  overflow-y: auto;
+}

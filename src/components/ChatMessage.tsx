@@ -20,7 +20,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
   const isBot = message.role === "assistant";
 
   return (
-    <div className="message-container flex gap-4">
+    <div className="message-container flex flex-col sm:flex-row gap-4 p-2 sm:p-4">
       <div className="flex-shrink-0">
         {isBot ? (
           <img src={logo4} alt="Bot Logo" className="w-10 h-10 rounded-2xl" />
@@ -33,7 +33,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
         )}
       </div>
 
-      <div className="flex-1 min-w-0 glass-effect p-6 rounded-2xl">
+      <div className="flex-1 min-w-0 glass-effect p-4 sm:p-6 rounded-2xl">
         <div className="flex items-center justify-between mb-2">
           <div
             className={`text-sm font-medium ${
