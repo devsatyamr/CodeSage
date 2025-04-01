@@ -10,7 +10,7 @@ llm = LLM(model="gemini/gemini-2.0-flash")
 
 # Create Developer Agent
 developer_agent = Agent(
-    role="Senior Full-Stack Developer",
+    role="A.U.R.A. Senior Full-Stack Developer",
     goal="Deliver high-quality, maintainable code with proper documentation",
     backstory=("Expert in full-stack development with 10+ years experience, "
               "specializing in clean architecture and best practices"),
