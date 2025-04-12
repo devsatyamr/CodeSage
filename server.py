@@ -55,15 +55,15 @@ def chat():
                 time.sleep(2)  # Simulate work time
                 
                 # Designer starts after Business Analyst
-                send_agent_update("Designer", delay=1)
+                send_agent_update("Designer", delay=3)
                 time.sleep(2)
                 
                 # Developer starts after Designer
-                send_agent_update("Software Developer", delay=1)
+                send_agent_update("Software Developer", delay=3)
                 time.sleep(2)
                 
                 # Tester starts after Developer
-                send_agent_update("Software Tester", delay=1)
+                send_agent_update("Software Tester", delay=3)
                 
                 # Create and execute initial tasks
                 initial_tasks = create_initial_tasks(product_info)
@@ -177,3 +177,6 @@ Project Phases:
         return jsonify({
             'response': f"An error occurred: {str(e)}. Please try again."
         }), 500
+
+if __name__ == '__main__':
+    app.run(debug=True)
