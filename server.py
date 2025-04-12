@@ -177,6 +177,3 @@ Project Phases:
         return jsonify({
             'response': f"An error occurred: {str(e)}. Please try again."
         }), 500
-
-if __name__ == '__main__':
-    app.run(debug=True)
