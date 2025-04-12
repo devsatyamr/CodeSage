@@ -1,110 +1,61 @@
-# CodeSage 🧙‍♂️
+# Project Manager Chatbot
 
-<div align="center">
-  <img src="src/assets/logo4.png" alt="CodeSage Logo" width="200"/>
-  <p><em>Your AI-powered Development Pod</em></p>
-</div>
+This project combines a React frontend chatbot with a backend that integrates with AI agents for project management.
 
-## 🌟 Overview
+## Setup
 
-CodeSage is an intelligent coding assistant that helps developers write, review, and improve their code. With an intuitive chat interface and powerful AI capabilities, CodeSage makes programming more efficient and enjoyable.
-
-## ✨ Features
-
-- 💬 **Interactive Chat Interface**: Natural conversation with AI about your code
-- 🎨 **Modern UI Design**: Clean, responsive interface with glass-effect components
-- 🔄 **Real-time Responses**: Instant AI feedback and code suggestions
-- 📝 **Code Analysis**: Get explanations and improvements for your code
-- 🎯 **Context-Aware**: Understands your project structure and coding patterns
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-- Node.js (v14.0.0 or higher)
-- npm or yarn
-
-### Installation
-
-1. Clone the repository:
-```bash
-git clone https://github.com/yourusername/codesage.git
-cd codesage
-```
-
-2. Install dependencies:
+### Frontend Setup
+1. Install Node.js dependencies:
 ```bash
 npm install
-# or
-yarn install
 ```
 
-3. Start the development server:
+2. Start the development server:
 ```bash
 npm run dev
-# or
-yarn dev
+```
+The frontend will be available at `http://localhost:5173`
+
+### Backend Setup
+1. Create a Python virtual environment:
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
-## 🖥️ Usage
-
-1. Launch the application in your browser
-2. Type your coding-related questions in the chat interface
-3. Get instant AI-powered responses and code suggestions
-4. Use the various features to improve your coding workflow
-
-## 🛠️ Tech Stack
-
-- **Frontend**: React, TypeScript
-- **Styling**: TailwindCSS
-- **Icons**: Lucide React
-- **UI Components**: Custom glass-effect design
-
-## 📁 Project Structure
-
-```plaintext
-codesage/
-server/
-│── node_modules/        (auto-created after running npm install)
-│── index.js            (Main backend file)
-│── package.json         (Dependencies and scripts)
-│── .env                 (For API keys or sensitive data)
-│── routes/
-│    ├── chatRoutes.js   (Handles chat requests)
-│── controllers/
-│    ├── chatController.js (Processes AI responses)
-│── config/
-│    ├── openaiConfig.js (OpenAI setup)
-├── src/
-│   ├── assets/
-│   ├── components/
-│   ├── types/
-│   └── ...
-├── public/
-└── ...
+2. Install Python dependencies:
+```bash
+pip install -r requirements.txt
 ```
 
-## 🤝 Contributing
+3. Create a `.env` file in the project root with your Gemini API key:
+```
+GOOGLE_API_KEY=your_gemini_api_key_here
+MODEL_NAME=gemini-pro
+```
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+4. Start the backend server:
+```bash
+python server.py
+```
+The backend API will be available at `http://localhost:8000`
 
-1. Fork the project
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+## Usage
 
-## 📄 License
+1. Open the chatbot interface in your browser at `http://localhost:5173`
+2. Type your questions about the project status or specifics
+3. The chatbot will communicate with the project manager agent and display the responses
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+## Features
 
-## 🙏 Acknowledgments
+- Real-time communication with AI project manager agent powered by Gemini
+- Detailed project status updates
+- Natural language processing for project queries
+- Beautiful and responsive UI
 
-- Thanks to all contributors who have helped shape CodeSage
-- Special thanks to the open-source community
+## Architecture
 
----
-
-<div align="center">
-  Made with ❤️ by CodeSage
-</div> 
+- Frontend: React + TypeScript + Vite
+- Backend: FastAPI + Python
+- AI Agents: CrewAI + LangChain + Gemini
+- Communication: REST API 
